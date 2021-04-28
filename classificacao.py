@@ -1,6 +1,8 @@
 # used to change filepaths
 from sklearn.metrics import roc_curve, auc, accuracy_score
 from sklearn.svm import SVC
+from sklearn.naive_bayes import GaussianNB
+from sklearn.tree import DecisionTreeClassifier
 from sklearn.model_selection import train_test_split
 from sklearn.decomposition import PCA
 from sklearn.preprocessing import StandardScaler
@@ -37,15 +39,15 @@ def get_image(row_id, root="datasets/"):
 apis_row = labels[labels.is_bee == 1.0].path[1]
 
 # show the corresponding image of an Apis
-plt.imshow(get_image(apis_row))
-plt.show()
+#plt.imshow(get_image(apis_row))
+#plt.show()
 
 # subset the dataframe to just wasp (genus is 1.0) get the value of the sixth item in the index
 wasp_row = labels[labels.is_wasp == 1.0].path[8122]
 
 # show the corresponding image of a wasp
-plt.imshow(get_image(wasp_row))
-plt.show()
+#plt.imshow(get_image(wasp_row))
+#plt.show()
 
 
 # load a wasp image using our get_image function and wasp_row from the previous cell
@@ -153,14 +155,17 @@ print(pd.Series(y_train).value_counts())
 
 
 # define support vector classifier
-svm = SVC(kernel='linear', probability=True, random_state=42)
+model = SVC(kernel='linear', probability=True, random_state=42)
+#model = GaussianNB()
+#model = DecisionTreeClassifier(random_state=42)
+
 
 # fit model
-svm.fit(X_train, y_train)
+model.fit(X_train, y_train)
 
 
 # generate predictions
-y_pred = svm.predict(X_test)
+y_pred = model.predict(X_test)
 
 # calculate accuracy
 accuracy = accuracy_score(y_pred, y_test)
@@ -168,7 +173,7 @@ print('Model accuracy is: ', accuracy)
 
 
 # predict probabilities for X_test using predict_proba
-probabilities = svm.predict_proba(X_test)
+probabilities = model.predict_proba(X_test)
 
 # select the probabilities for label 1.0
 y_proba = probabilities[:,1]
