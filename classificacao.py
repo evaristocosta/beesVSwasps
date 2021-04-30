@@ -38,7 +38,7 @@ def treino():
           "2 - Holdout")
     validacao = input("Digite o valor: ")
 
-    entrada, saida = load_bvsw(500)
+    quantidade_dados = 500  # máximo é 4000
     repeticoes = 10
     # para uso da validacao
     acertos = []
@@ -48,39 +48,39 @@ def treino():
     falsos_positivos = []
     verdadeiros_positivos = []
 
-    # define classifier
     print("Separando dados, construindo modelo e gerando predições...")
+    entrada, saida = load_bvsw(quantidade_dados)
 
     if validacao == '1':
         kf = KFold(n_splits=repeticoes, shuffle=True)
 
         for treino, teste in kf.split(entrada, saida):
             # redefine modelo a cada repeticao
-            model = escolhe_modelo(escolha)
+            modelo = escolhe_modelo(escolha)
 
             # fit model
-            model.fit(entrada[treino], saida[treino])
+            modelo.fit(entrada[treino], saida[treino])
 
             # generate predictions
-            y_pred = model.predict(entrada[teste])
+            predicao = modelo.predict(entrada[teste])
 
             # calculate accuracy
-            accuracy = accuracy_score(y_pred, saida[teste])
+            acerto = accuracy_score(predicao, saida[teste])
             # predict probabilities for entrada[teste] using predict_proba
-            probabilities = model.predict_proba(entrada[teste])
+            probabilities = modelo.predict_proba(entrada[teste])
             # select the probabilities for label 1.0
-            y_proba = probabilities[:, 1]
+            saida_proba = probabilities[:, 1]
             # calculate false positive rate and true positive rate at different thresholds
             false_positive_rate, true_positive_rate, _ = roc_curve(
-                saida[teste], y_proba, pos_label=1)
+                saida[teste], saida_proba, pos_label=1)
 
             # calculate AUC
             roc_auc = auc(false_positive_rate, true_positive_rate)
             # MSE
-            mse = mean_squared_error(saida[teste], y_pred)
+            mse = mean_squared_error(saida[teste], predicao)
 
             # guarda resultados
-            acertos.append(accuracy)
+            acertos.append(acerto)
             aucs.append(roc_auc)
             mses.append(mse)
             falsos_positivos.append(false_positive_rate)
@@ -88,40 +88,39 @@ def treino():
 
     else:
         # divide em sets de treino e teste
-        X_train, X_test, y_train, y_test = train_test_split(entrada,
-                                                            saida,
-                                                            test_size=.3,
-                                                            random_state=1234123)
-
+        entrada_treino, entrada_teste, saida_treino, saida_teste = train_test_split(entrada,
+                                                                                    saida,
+                                                                                    test_size=.3,
+                                                                                    random_state=1234123)
 
         # holdout repetido
         for _ in range(repeticoes):
             # redefine modelo a cada repeticao
-            model = escolhe_modelo(escolha)
+            modelo = escolhe_modelo(escolha)
 
             # fit model
-            model.fit(X_train, y_train)
+            modelo.fit(entrada_treino, saida_treino)
 
             # generate predictions
-            y_pred = model.predict(X_test)
+            predicao = modelo.predict(entrada_teste)
 
             # calculate accuracy
-            accuracy = accuracy_score(y_pred, y_test)
-            # predict probabilities for X_test using predict_proba
-            probabilities = model.predict_proba(X_test)
+            acerto = accuracy_score(predicao, saida_teste)
+            # predict probabilities for entrada_teste using predict_proba
+            probabilities = modelo.predict_proba(entrada_teste)
             # select the probabilities for label 1.0
-            y_proba = probabilities[:, 1]
+            saida_proba = probabilities[:, 1]
             # calculate false positive rate and true positive rate at different thresholds
             false_positive_rate, true_positive_rate, _ = roc_curve(
-                y_test, y_proba, pos_label=1)
+                saida_teste, saida_proba, pos_label=1)
 
             # calculate AUC
             roc_auc = auc(false_positive_rate, true_positive_rate)
             # MSE
-            mse = mean_squared_error(y_test, y_pred)
+            mse = mean_squared_error(saida_teste, predicao)
 
             # guarda resultados
-            acertos.append(accuracy)
+            acertos.append(acerto)
             aucs.append(roc_auc)
             mses.append(mse)
             falsos_positivos.append(false_positive_rate)
