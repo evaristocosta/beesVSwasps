@@ -1,3 +1,4 @@
+
 from sklearn.decomposition import PCA
 from sklearn.preprocessing import StandardScaler
 from skimage.color import rgb2gray
@@ -6,6 +7,10 @@ from PIL import Image
 import numpy as np
 import pandas as pd
 import os
+
+
+import matplotlib.pyplot as plt
+from pathlib import Path
 
 
 def get_image(row_id, root="datasets/"):
@@ -19,6 +24,8 @@ def get_image(row_id, root="datasets/"):
 
 
 def create_features(img):
+    # resize
+    img = img.resize([150, 150])
     # flatten three channel color image
     color_features = img.flatten()
     # convert image to grayscale
@@ -52,12 +59,12 @@ def create_feature_matrix(label_dataframe, total_dados):
             features_list.append(image_features)
 
     # convert list of arrays into a matrix
-    feature_matrix = np.zeros([len(features_list), len(
+    """ feature_matrix = np.zeros([len(features_list), len(
         max(features_list, key=lambda x: len(x)))])
     for i, j in enumerate(features_list):
-        feature_matrix[i][0:len(j)] = j
+        feature_matrix[i][0:len(j)] = j """
 
-    return feature_matrix
+    return features_list
 
 
 def load_bvsw(total_dados=50):

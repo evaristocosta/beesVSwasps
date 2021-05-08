@@ -14,6 +14,12 @@ import matplotlib.pyplot as plt
 from pipeline import load_bvsw
 
 
+from sklearn.ensemble import RandomForestClassifier
+from sklearn.model_selection import train_test_split
+from sklearn.metrics import confusion_matrix, roc_auc_score, classification_report, accuracy_score, recall_score
+from sklearn.metrics import precision_score, f1_score, plot_roc_curve
+
+
 def escolhe_modelo(escolha):
     if escolha == '1':
         return SVC(kernel='linear', probability=True, random_state=42)
@@ -78,6 +84,13 @@ def treino():
             roc_auc = auc(false_positive_rate, true_positive_rate)
             # MSE
             mse = mean_squared_error(saida[teste], predicao)
+
+            # 
+            f1_score(saida[teste], predicao)
+            recall_score(saida[teste], predicao)
+            precision_score(saida[teste], predicao)
+            accuracy_score(saida[teste], predicao)
+            confusion_matrix(saida[teste], predicao)
 
             # guarda resultados
             acertos.append(acerto)
