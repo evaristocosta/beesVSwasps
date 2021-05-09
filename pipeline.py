@@ -21,7 +21,7 @@ def get_image(row_id, root="datasets/"):
     file_path = os.path.join(root, filename)
     img = Image.open(file_path)
     # resize
-    img = img.resize([150, 150])
+    img = img.resize([100, 100])
     return np.array(img)
 
 

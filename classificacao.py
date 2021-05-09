@@ -44,7 +44,7 @@ def treino():
           "2 - Holdout")
     validacao = input("Digite o valor: ")
 
-    quantidade_dados = 500  # máximo é 4000
+    quantidade_dados = 1000  # máximo é 4000
     repeticoes = 10
     # para uso da validacao
     acertos = []
