@@ -20,12 +20,12 @@ def get_image(row_id, root="datasets/"):
     filename = row_id.replace("\\", "/")
     file_path = os.path.join(root, filename)
     img = Image.open(file_path)
+    # resize
+    img = img.resize([150, 150])
     return np.array(img)
 
 
 def create_features(img):
-    # resize
-    img = img.resize([150, 150])
     # flatten three channel color image
     color_features = img.flatten()
     # convert image to grayscale
